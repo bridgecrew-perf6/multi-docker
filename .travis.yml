@@ -4,12 +4,15 @@ services:
   - docker
 
 before_install:
+  # Build the test files
   - docker build -t tonyjwalt/react-test -f ./client/Dockerfile.dev ./client
 
 script:
+  # Run the tests
   - docker run -e CI=true tonyjwalt/react-test npm test
 
 after_success:
+  # Build the images
   - docker build -t tonyjwalt/multi-client ./client
   - docker build -t tonyjwalt/multi-nginx ./nginx
   - docker build -t tonyjwalt/multi-server ./server
@@ -21,3 +24,17 @@ after_success:
   - docker push tonyjwalt/multi-nginx
   - docker push tonyjwalt/multi-server
   - docker push tonyjwalt/multi-worker
+
+#  Deploy to elastic beanstalk
+#  Really only need to send Dockerrun.aws.json 
+deploy:
+  provider: elasticbeanstalk
+  region: 'us-west-2'
+  app: 'multi-docker'
+  env: 'MultiDocker-env'
+  bucket_name: 'elasticbeanstalk-us-west-2-586487920329'
+  bucket_path: 'docker-multi'
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
