@@ -9,8 +9,8 @@ class Fib extends Component {
   };
 
   componentDidMount() {
-    this.fetchValues();
-    this.fetchIndexes();
+      this.fetchValues();
+      this.fetchIndexes();
   }
 
   async fetchValues() {
@@ -24,7 +24,8 @@ class Fib extends Component {
   }
 
   renderSeenIndexes() {
-    const indexArray = this.state.seenIndexes.map( ({number}) => number );
+    const indexes = this.state.seenIndexes || [];
+    const indexArray = indexes.map( ({number}) => number );
     return indexArray.join(', ');
   }
 
